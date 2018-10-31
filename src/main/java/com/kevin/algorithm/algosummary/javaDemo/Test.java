@@ -329,6 +329,8 @@ public class Test {
     public static void testFunction(){
         ArrayList arrayList = new ArrayList();
         ConcurrentHashMap<String, String> concurrentHashMap = new ConcurrentHashMap<>();
+        int a = 10_00_000_9;
+        int aa = 0b1100_001;
     }
 
 

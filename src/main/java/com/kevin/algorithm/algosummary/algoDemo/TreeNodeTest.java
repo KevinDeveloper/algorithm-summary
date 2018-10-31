@@ -4,7 +4,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * @ClassName: TreeNodeTest
@@ -13,12 +15,12 @@ import java.util.Queue;
  * @Date: 2018/10/24 18:06
  */
 public class TreeNodeTest {
-    class TreeNode {
-        String val;
+    static class TreeNode {
+        int val;
         TreeNode left = null;
         TreeNode right = null;
 
-        TreeNode(String val) {
+        TreeNode(int val) {
             this.val = val;
         }
     }
@@ -169,5 +171,92 @@ public class TreeNodeTest {
         }
         return list;
     }
+
+    /**
+     * 后序编历二叉树  - 递归
+     *
+     * @param node
+     */
+    public void LRDTreeNode(TreeNode node) {
+        if (Objects.isNull(node)) {
+            return;
+        }
+        LRDTreeNode(node.left);
+        LRDTreeNode(node.right);
+        System.out.print(node.val + "-");
+
+    }
+    /**
+     * 后序遍历二叉树  - 非递归
+     *
+     * @param node
+     */
+    public void LRDTreeNodeForLoop(TreeNode node) {
+        if (Objects.isNull(node)) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        List<TreeNode> resultList = new ArrayList<>();
+        stack.push(node);
+        while (!stack.isEmpty()) {
+            TreeNode t = stack.pop();
+            boolean endLeft = false;
+            boolean endRight = false;
+            if (Objects.isNull(t.left)) {
+                endLeft = true;
+            } else if (resultList.contains(t.left)) {
+                endLeft = true;
+            }
+            if (Objects.isNull(t.right)) {
+                endRight = true;
+            } else if (resultList.contains(t.right)) {
+                endRight = true;
+            }
+            //两种情况： 1、两个子节点都为空， 2、子节点不为空但在结果数组中存在
+            if (endLeft && endRight) {
+                resultList.add(t);
+                continue;
+            }
+            stack.push(t);
+            if (!endRight) {
+                stack.push(t.right);
+            }
+            if (!endLeft) {
+                stack.push(t.left);
+            }
+        }
+        resultList.forEach(treeNode -> {
+            System.out.print(treeNode.val + "-");
+        });
+
+    }
+
+    public static void main(String[] args) {
+        TreeNodeTest treeNodeTest = new TreeNodeTest();
+        TreeNode root = new TreeNode(1);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(3);
+        TreeNode n4 = new TreeNode(4);
+        TreeNode n5 = new TreeNode(5);
+        TreeNode n6 = new TreeNode(6);
+        TreeNode n7 = new TreeNode(7);
+        TreeNode n8 = new TreeNode(8);
+        root.left = n2;
+        root.right = n3;
+
+        n2.left = n4;
+        n2.right = n5;
+
+        n3.left = n6;
+        n3.right = n7;
+
+        n4.left = n8;
+
+        //treeNodeTest.LRDTreeNode(root);
+        treeNodeTest.LRDTreeNodeForLoop(root);
+
+
+    }
+
 
 }
