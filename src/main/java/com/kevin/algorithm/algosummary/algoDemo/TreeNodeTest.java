@@ -188,6 +188,8 @@ public class TreeNodeTest {
     }
     /**
      * 后序遍历二叉树  - 非递归
+     * 定义一个栈中间遍历栈，一个数组-结果数组
+     * 遍历的时候将节点加入到栈，然后弹出判断该节点的子节点是否为空，或者两个子节点都在结果数据中存在，则将该节点加入到结果数组中。否则继续将该节点加入到栈，同时按照后序遍历的顺序反序（因为是中间栈，所以相反），将子节点push到中间栈中，继续以上逻辑。
      *
      * @param node
      */
@@ -231,6 +233,88 @@ public class TreeNodeTest {
 
     }
 
+
+    /**
+     * 获取二叉树的全部路径
+     * @param node
+     * @return
+     */
+    public List<List<TreeNode>> findAllPaths(TreeNode node){
+        List<List<TreeNode>> allPaths = new ArrayList<>();
+        List<TreeNode> path = new ArrayList<>();
+        findAllPath(node, path, allPaths);
+        return allPaths;
+    }
+
+    /**
+     * 定义两个数组，一个中间数组，保存遍历过程中的中间路径；
+     * 一个结果数组，将符合条件的中间路径加入该数组。
+     * 遍历树节点，若节点不为空，则节点加入中间数组，当判断该节点的左右孩子都为空时，则该节点到根节点的路径加入到结果数组中。若不满足，则左右孩子继续遍历。左右孩子遍历之后 ，再从中间数组中移除当前节点
+     * @param node
+     * @param nodeList
+     * @param allPaths
+     */
+    public void findAllPath(TreeNode node, List<TreeNode> nodeList , List<List<TreeNode>> allPaths){
+        if(node == null){
+            return;
+        }
+        nodeList.add(node);
+        if(node.left == null && node.right == null){
+            List<TreeNode> path = new ArrayList<>();
+            for(TreeNode t : nodeList){
+                path.add(t);
+            }
+            allPaths.add(path);
+        }
+        if(node.left != null) {
+            findAllPath(node.left, nodeList,allPaths);
+        }
+        if(node.right != null) {
+            findAllPath(node.right, nodeList,allPaths);
+        }
+        nodeList.remove(nodeList.size() -1 );
+    }
+
+    /**
+     * 求二叉树的路径和
+     * @param node
+     * @param sum
+     * @return
+     */
+    public List<List<TreeNode>> findSumPaths(TreeNode node, int sum){
+        List<List<TreeNode>> list = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        int curSum = 0;
+        findSumPath(node, sum, curSum, stack, list);
+        return list;
+    }
+
+    public void findSumPath(TreeNode node , int sum,int currSum, Stack<TreeNode> stack,  List<List<TreeNode>> list){
+        if(node == null){
+            return;
+        }
+        currSum += node.val;
+        stack.push(node);
+        boolean isLeaf = node.left == null && node.right == null;
+        if(currSum == sum && isLeaf){
+            List<TreeNode> tempPath = new ArrayList<>();
+            for(TreeNode t : stack){
+                tempPath.add(t);
+            }
+            list.add(tempPath);
+        }
+        if(node.left != null) {
+            findSumPath(node.left, sum, currSum, stack, list);
+        }
+        if(node.right != null) {
+            findSumPath(node.right, sum, currSum, stack, list);
+        }
+        currSum -= node.val;
+        stack.pop();
+    }
+
+
+
     public static void main(String[] args) {
         TreeNodeTest treeNodeTest = new TreeNodeTest();
         TreeNode root = new TreeNode(1);
@@ -253,9 +337,12 @@ public class TreeNodeTest {
         n4.left = n8;
 
         //treeNodeTest.LRDTreeNode(root);
-        treeNodeTest.LRDTreeNodeForLoop(root);
+        //treeNodeTest.LRDTreeNodeForLoop(root);
 
-
+        List<List<TreeNode>> lists = new ArrayList<>();
+        lists = treeNodeTest.findAllPaths(root);
+        lists = treeNodeTest.findSumPaths(root, 8);
+        System.out.println("============");
     }
 
 
