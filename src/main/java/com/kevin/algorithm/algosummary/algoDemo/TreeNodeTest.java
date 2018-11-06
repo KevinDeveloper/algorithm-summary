@@ -146,9 +146,9 @@ public class TreeNodeTest {
      * @return
      */
     public List<String> binaryTreePaths3(TreeNode root) {
-        List<String> list = new ArrayList<String>();
-        Queue<TreeNode> qNode = new LinkedList<TreeNode>();
-        Queue<String> qStr = new LinkedList<String>();
+        List<String> list = new ArrayList<>();
+        Queue<TreeNode> qNode = new LinkedList<>();
+        Queue<String> qStr = new LinkedList<>();
         if (root == null) {
             return list;
         }
@@ -186,6 +186,7 @@ public class TreeNodeTest {
         System.out.print(node.val + "-");
 
     }
+
     /**
      * 后序遍历二叉树  - 非递归
      * 定义一个栈中间遍历栈，一个数组-结果数组
@@ -236,13 +237,14 @@ public class TreeNodeTest {
 
     /**
      * 获取二叉树的全部路径
+     *
      * @param node
      * @return
      */
-    public List<List<TreeNode>> findAllPaths(TreeNode node){
+    public List<List<TreeNode>> findAllPaths(TreeNode node) {
         List<List<TreeNode>> allPaths = new ArrayList<>();
         List<TreeNode> path = new ArrayList<>();
-        findAllPath(node, path, allPaths);
+        findAllPathCore(node, path, allPaths);
         return allPaths;
     }
 
@@ -250,69 +252,250 @@ public class TreeNodeTest {
      * 定义两个数组，一个中间数组，保存遍历过程中的中间路径；
      * 一个结果数组，将符合条件的中间路径加入该数组。
      * 遍历树节点，若节点不为空，则节点加入中间数组，当判断该节点的左右孩子都为空时，则该节点到根节点的路径加入到结果数组中。若不满足，则左右孩子继续遍历。左右孩子遍历之后 ，再从中间数组中移除当前节点
+     *
      * @param node
      * @param nodeList
      * @param allPaths
      */
-    public void findAllPath(TreeNode node, List<TreeNode> nodeList , List<List<TreeNode>> allPaths){
-        if(node == null){
+    public void findAllPathCore(TreeNode node, List<TreeNode> nodeList, List<List<TreeNode>> allPaths) {
+        if (node == null) {
             return;
         }
         nodeList.add(node);
-        if(node.left == null && node.right == null){
+        if (node.left == null && node.right == null) {
             List<TreeNode> path = new ArrayList<>();
-            for(TreeNode t : nodeList){
-                path.add(t);
-            }
+            path.addAll(nodeList);
+//            for(TreeNode t : nodeList){
+//                path.add(t);
+//            }
             allPaths.add(path);
         }
-        if(node.left != null) {
-            findAllPath(node.left, nodeList,allPaths);
+        if (node.left != null) {
+            findAllPathCore(node.left, nodeList, allPaths);
         }
-        if(node.right != null) {
-            findAllPath(node.right, nodeList,allPaths);
+        if (node.right != null) {
+            findAllPathCore(node.right, nodeList, allPaths);
         }
-        nodeList.remove(nodeList.size() -1 );
+        nodeList.remove(nodeList.size() - 1);
     }
 
     /**
      * 求二叉树的路径和
+     *
      * @param node
      * @param sum
      * @return
      */
-    public List<List<TreeNode>> findSumPaths(TreeNode node, int sum){
+    public List<List<TreeNode>> findSumPaths(TreeNode node, int sum) {
         List<List<TreeNode>> list = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
         int curSum = 0;
-        findSumPath(node, sum, curSum, stack, list);
+        findSumPathCore(node, sum, curSum, stack, list);
         return list;
     }
 
-    public void findSumPath(TreeNode node , int sum,int currSum, Stack<TreeNode> stack,  List<List<TreeNode>> list){
-        if(node == null){
+    public void findSumPathCore(TreeNode node, int sum, int currSum, Stack<TreeNode> stack, List<List<TreeNode>> list) {
+        if (node == null) {
             return;
         }
         currSum += node.val;
         stack.push(node);
         boolean isLeaf = node.left == null && node.right == null;
-        if(currSum == sum && isLeaf){
+        if (currSum == sum && isLeaf) {
             List<TreeNode> tempPath = new ArrayList<>();
-            for(TreeNode t : stack){
-                tempPath.add(t);
-            }
+            tempPath.addAll(stack);
+//            for(TreeNode t : stack){
+//                tempPath.add(t);
+//            }
             list.add(tempPath);
         }
-        if(node.left != null) {
-            findSumPath(node.left, sum, currSum, stack, list);
+        if (node.left != null) {
+            findSumPathCore(node.left, sum, currSum, stack, list);
         }
-        if(node.right != null) {
-            findSumPath(node.right, sum, currSum, stack, list);
+        if (node.right != null) {
+            findSumPathCore(node.right, sum, currSum, stack, list);
         }
         currSum -= node.val;
         stack.pop();
     }
 
+    /**
+     * 按层遍历树
+     *
+     * @param node
+     * @return
+     */
+    public List<TreeNode> findNodesForLayer(TreeNode node) {
+        List<TreeNode> list = new ArrayList<>();
+        if (node != null) {
+            ArrayDeque<TreeNode> nodeQueue = new ArrayDeque<TreeNode>();
+            findNodesForLayerCore(node, nodeQueue, list);
+        }
+        return list;
+    }
+
+    public void findNodesForLayerCore(TreeNode node, ArrayDeque<TreeNode> nodeQueue, List<TreeNode> list) {
+        if (node == null) {
+            return;
+        }
+        nodeQueue.add(node);
+        while (!nodeQueue.isEmpty()) {
+            TreeNode tempNode = nodeQueue.poll();
+            list.add(tempNode);
+            if (null != tempNode.left) {
+                nodeQueue.add(tempNode.left);
+            }
+            if (null != tempNode.right) {
+                nodeQueue.add(tempNode.right);
+            }
+        }
+    }
+
+    /**
+     * 按层遍历树 , 按层分隔
+     *
+     * @param node
+     * @return
+     */
+    public List<TreeNode> findNodesForLayerNewLine(TreeNode node) {
+        List<TreeNode> list = new ArrayList<>();
+        if (node != null) {
+            ArrayDeque<TreeNode> nodeQueue = new ArrayDeque<TreeNode>();
+            findNodesForLayerNewLineCore(node, nodeQueue, list);
+        }
+        return list;
+    }
+
+    public void findNodesForLayerNewLineCore(TreeNode node, ArrayDeque<TreeNode> nodeQueue, List<TreeNode> list) {
+        if (node == null) {
+            return;
+        }
+        int curLayerNodeCount = 1;
+        int layerNodeCount = 0;
+        nodeQueue.add(node);
+        while (!nodeQueue.isEmpty()) {
+            TreeNode tempNode = nodeQueue.poll();
+            list.add(tempNode);
+            curLayerNodeCount--;
+            if (null != tempNode.left) {
+                nodeQueue.add(tempNode.left);
+                layerNodeCount++;
+            }
+            if (null != tempNode.right) {
+                nodeQueue.add(tempNode.right);
+                layerNodeCount++;
+            }
+            if (curLayerNodeCount == 0 && !nodeQueue.isEmpty()) {
+                curLayerNodeCount = layerNodeCount;
+                layerNodeCount = 0;
+                //用-1标记换行
+                list.add(new TreeNode(-1));
+            }
+        }
+    }
+
+
+    /**
+     * 判断是否为平衡二叉树
+     * 方法1：通过判断树的深度。该方法会有节点重复计算的问题
+     *
+     * @param root
+     * @return
+     */
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        int left = getTreeDepth(root.left);
+        int right = getTreeDepth(root.right);
+        int diff = left - right;
+        if (diff > 1 || diff < -1) {
+            return false;
+        }
+        return isBalanced(root.left) && isBalanced(root.right);
+    }
+
+    public int getTreeDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = getTreeDepth(root.left);
+        int right = getTreeDepth(root.right);
+        return 1 + (right > left ? right : left);
+    }
+
+    /**
+     * 判断是否为平衡二叉树
+     * 方法2：通过类似于后序遍历的方式
+     *
+     * @param root
+     * @return
+     */
+    Boolean isBalance = true;
+    public boolean isBalanced2(TreeNode root) {
+        getTreeDepth2(root);
+        return isBalance;
+        //isBalance 会在 TreeDepth1(root)中赋值。
+    }
+
+    public int getTreeDepth2(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = getTreeDepth2(root.left);
+        //左子树高度
+        int right = getTreeDepth2(root.right);
+        //右子树高度
+        if (Math.abs(left - right) > 1) {
+            //只要有一个子树的左右子树的高度绝对值大于 1 isBalance=false
+            isBalance = false;
+        }
+        return Math.max(left, right) + 1;
+    }
+    /**
+     * 判断是否为平衡二叉树
+     * 方法3：通过类似于后序遍历的方式, 通过创建对象引用的方式，将值传递进去
+     *
+     * @return
+     */
+    class TreeDepth {
+        int depth;
+
+        public TreeDepth(int depth) {
+            this.depth = depth;
+        }
+
+
+        public int getDepth() {
+            return depth;
+        }
+
+        public void setDepth(int depth) {
+            this.depth = depth;
+        }
+    }
+
+    public boolean isBalanced3(TreeNode root) {
+        TreeDepth depth = new TreeDepth(0);
+        return isBalanced3Core(root, depth);
+    }
+
+    public boolean isBalanced3Core(TreeNode root, TreeDepth depth) {
+        if (root == null) {
+            depth.setDepth(0);
+            return true;
+        }
+        TreeDepth left = new TreeDepth(0);
+        TreeDepth right = new TreeDepth(0);
+        if (isBalanced3Core(root.left, left) && isBalanced3Core(root.right, right)) {
+            int diff = left.getDepth() - right.getDepth();
+            if (diff <= 1 && diff >= -1) {
+                depth.setDepth(1 + Math.max(left.getDepth(),right.getDepth()));
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     public static void main(String[] args) {
@@ -342,6 +525,14 @@ public class TreeNodeTest {
         List<List<TreeNode>> lists = new ArrayList<>();
         lists = treeNodeTest.findAllPaths(root);
         lists = treeNodeTest.findSumPaths(root, 8);
+        System.out.println("============");
+
+        List<TreeNode> nodes = treeNodeTest.findNodesForLayer(root);
+        nodes = treeNodeTest.findNodesForLayerNewLine(root);
+        System.out.println("============");
+        boolean isBalance1 = treeNodeTest.isBalanced(root);
+        boolean isBalance2 = treeNodeTest.isBalanced2(root);
+        boolean isBalance3 = treeNodeTest.isBalanced3(root);
         System.out.println("============");
     }
 
