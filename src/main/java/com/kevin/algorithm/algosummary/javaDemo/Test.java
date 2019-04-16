@@ -282,6 +282,16 @@ public class Test {
         System.out.println("====list:" + Arrays.toString(list.toArray()));
     }
 
+    public static void testListToMap(){
+       List<Integer> list = Lists.newArrayList();
+        for (int i = 1; i < 50; i++) {
+            list.add(i);
+        }
+        list = list.subList(0, 20);
+        System.out.println("list.size="+list.size()+" ,list=" + Arrays.toString(list.toArray()));
+        Map<Integer, Integer> followedMap = list.stream().collect(Collectors.toMap(id->id, o -> o, (a, b) -> a));
+        System.out.println("followedMap.size="+followedMap.size()+" ,followedMap=" + Arrays.toString(followedMap.keySet().toArray()));
+    }
 
     public static void testMapReplaceAll() {
         Map<String, List<String>> map = new HashMap<>();
